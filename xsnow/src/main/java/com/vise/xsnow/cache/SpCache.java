@@ -29,6 +29,13 @@ public class SpCache implements ICache {
         return sp;
     }
 
+    /**
+     * 保存数据到SP
+     *
+     * 可以保存任何数据,
+     * @param key key
+     * @param ser 保存数据
+     */
     @Override
     public void put(String key, Object ser) {
         try {
@@ -45,11 +52,18 @@ public class SpCache implements ICache {
         }
     }
 
+    /**
+     * 获取数据
+     * @param key
+     * @return
+     */
     @Override
     public Object get(String key) {
         try {
             String hex = get(key, null);
-            if (hex == null) return null;
+            if (hex == null) {
+                return null;
+            }
             byte[] bytes = HexUtil.decodeHex(hex.toCharArray());
             bytes = BASE64.decode(bytes);
             Object obj = ByteUtil.byteToObject(bytes);
@@ -61,6 +75,11 @@ public class SpCache implements ICache {
         return null;
     }
 
+    /**
+     * 判断是否包含key对应的数据
+     * @param key
+     * @return
+     */
     @Override
     public boolean contains(String key) {
         return sp.contains(key);

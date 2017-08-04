@@ -17,8 +17,8 @@ public class MemoryCache implements ICache {
     private MemoryCache() {
         int maxMemory = (int) Runtime.getRuntime().maxMemory();
         int cacheSize = maxMemory / 8;
+        // 创建LruCache
         cache = new LruCache(cacheSize);
-
     }
 
     public static MemoryCache getInstance() {
@@ -32,9 +32,16 @@ public class MemoryCache implements ICache {
         return instance;
     }
 
+    /**
+     * 添加缓存到LruCache
+     * @param key
+     * @param value
+     */
     @Override
     public synchronized void put(String key, Object value) {
-        if (TextUtils.isEmpty(key)) return;
+        if (TextUtils.isEmpty(key)) {
+            return;
+        }
 
         if (cache.get(key) != null) {
             cache.remove(key);
@@ -42,6 +49,11 @@ public class MemoryCache implements ICache {
         cache.put(key, value);
     }
 
+    /**
+     * 获取缓存
+     * @param key
+     * @return
+     */
     @Override
     public Object get(String key) {
         return cache.get(key);
@@ -57,6 +69,10 @@ public class MemoryCache implements ICache {
         return null;
     }
 
+    /**
+     * 移除缓存
+     * @param key
+     */
     @Override
     public void remove(String key) {
         if (cache.get(key) != null) {
@@ -69,6 +85,9 @@ public class MemoryCache implements ICache {
         return cache.get(key) != null;
     }
 
+    /**
+     * 清空缓存
+     */
     @Override
     public void clear() {
         cache.evictAll();
