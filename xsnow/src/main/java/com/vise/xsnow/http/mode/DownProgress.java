@@ -98,6 +98,7 @@ public class DownProgress implements Parcelable {
         } else {
             result = downloadSize * 1.0 / totalSize;
         }
+
         NumberFormat nf = NumberFormat.getPercentInstance();
         nf.setMinimumFractionDigits(2);//控制保留小数点后几位，2：表示保留2位小数点
         percent = nf.format(result);
@@ -129,12 +130,18 @@ public class DownProgress implements Parcelable {
 
     public static final long ONE_KB = 1024;
     public static final BigInteger ONE_KB_BI = BigInteger.valueOf(ONE_KB);
+    // multiply: 乘法
     public static final BigInteger ONE_MB_BI = ONE_KB_BI.multiply(ONE_KB_BI);
     public static final BigInteger ONE_GB_BI = ONE_KB_BI.multiply(ONE_MB_BI);
     public static final BigInteger ONE_TB_BI = ONE_KB_BI.multiply(ONE_GB_BI);
     public static final BigInteger ONE_PB_BI = ONE_KB_BI.multiply(ONE_TB_BI);
     public static final BigInteger ONE_EB_BI = ONE_KB_BI.multiply(ONE_PB_BI);
 
+    /**
+     * 计算文件的容量
+     * @param size 文件长度
+     * @return
+     */
     public static String byteCountToDisplaySize(BigInteger size) {
         String displaySize;
 
@@ -156,6 +163,11 @@ public class DownProgress implements Parcelable {
         return displaySize;
     }
 
+    /**
+     * 计算容量
+     * @param size
+     * @return
+     */
     public static String byteCountToDisplaySize(long size) {
         return byteCountToDisplaySize(BigInteger.valueOf(size));
     }

@@ -32,19 +32,25 @@ public class CookiesStore {
     private final SharedPreferences cookiePrefs;
 
     public CookiesStore(Context context) {
+        // ViseConfig.COOKIE_PREFS: 文件缓存路径
+        // 0: 访问权限
         cookiePrefs = context.getSharedPreferences(ViseConfig.COOKIE_PREFS, 0);
         cookies = new HashMap<>();
         Map<String, ?> prefsMap = cookiePrefs.getAll();
+
         for (Map.Entry<String, ?> entry : prefsMap.entrySet()) {
             String[] cookieNames = TextUtils.split((String) entry.getValue(), ",");
+
             for (String name : cookieNames) {
                 String encodedCookie = cookiePrefs.getString(name, null);
+
                 if (encodedCookie != null) {
                     Cookie decodedCookie = decodeCookie(encodedCookie);
                     if (decodedCookie != null) {
                         if (!cookies.containsKey(entry.getKey())) {
                             cookies.put(entry.getKey(), new ConcurrentHashMap<String, Cookie>());
                         }
+                        // 保存cookies
                         cookies.get(entry.getKey()).put(name, decodedCookie);
                     }
                 }
@@ -133,6 +139,11 @@ public class CookiesStore {
         return HexUtil.encodeHexStr(os.toByteArray());
     }
 
+    /**
+     *
+     * @param cookieString
+     * @return
+     */
     private Cookie decodeCookie(String cookieString) {
         byte[] bytes = HexUtil.decodeHex(cookieString.toCharArray());
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);

@@ -26,15 +26,30 @@ public class OfflineCacheInterceptor implements Interceptor {
         this(context, ViseConfig.MAX_AGE_OFFLINE);
     }
 
+    /**
+     * @param context           上下文
+     * @param cacheControlValue 离线缓存时间
+     */
     public OfflineCacheInterceptor(Context context, int cacheControlValue) {
         this.context = context;
         this.cacheControlValue = String.format("max-stale=%d", cacheControlValue);
     }
 
+    /**
+     * CacheControl.FORCE_CACHE: 仅仅使用缓存
+     * public: 所有内容都将被缓存
+     * only-if-cached: 只使用缓存
+     *
+     * @param chain
+     * @return
+     * @throws IOException
+     */
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
+
         Request request = chain.request();
         if (!Network.isConnected(context)) {
+            // 没有网络
             request = request.newBuilder()
                     .cacheControl(CacheControl.FORCE_CACHE)
                     .build();

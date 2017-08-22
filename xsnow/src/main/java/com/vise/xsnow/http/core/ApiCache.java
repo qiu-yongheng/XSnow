@@ -32,6 +32,10 @@ public class ApiCache {
     private final DiskCache diskCache;
     private String cacheKey;
 
+    /**
+     * 自定义的订阅者
+     * @param <T>
+     */
     private static abstract class SimpleSubscribe<T> implements ObservableOnSubscribe<T> {
         @Override
         public void subscribe(ObservableEmitter<T> subscriber) throws Exception {
@@ -66,6 +70,13 @@ public class ApiCache {
         diskCache = new DiskCache(context, diskDir, diskMaxSize).setCacheTime(time);
     }
 
+    /**
+     * 转换
+     * @param cacheMode
+     * @param type
+     * @param <T>
+     * @return
+     */
     public <T> ObservableTransformer<T, CacheResult<T>> transformer(CacheMode cacheMode, final Type type) {
         final ICacheStrategy strategy = loadStrategy(cacheMode);//获取缓存策略
         return new ObservableTransformer<T, CacheResult<T>>() {
@@ -77,7 +88,11 @@ public class ApiCache {
         };
     }
 
-
+    /**
+     * 获取数据
+     * @param key
+     * @return
+     */
     public Observable<String> get(final String key) {
         return Observable.create(new SimpleSubscribe<String>() {
             @Override
@@ -87,6 +102,13 @@ public class ApiCache {
         });
     }
 
+    /**
+     * 保存缓存
+     * @param key
+     * @param value
+     * @param <T>
+     * @return
+     */
     public <T> Observable<Boolean> put(final String key, final T value) {
         return Observable.create(new SimpleSubscribe<Boolean>() {
             @Override

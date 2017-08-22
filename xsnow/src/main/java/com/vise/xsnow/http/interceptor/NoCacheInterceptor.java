@@ -15,6 +15,12 @@ import okhttp3.Response;
  */
 public class NoCacheInterceptor implements Interceptor {
 
+    /**
+     * Cache-Control: no-cache 请求或响应数据不进行缓存
+     * @param chain
+     * @return
+     * @throws IOException
+     */
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();

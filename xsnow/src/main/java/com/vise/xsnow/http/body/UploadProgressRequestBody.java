@@ -29,6 +29,11 @@ public class UploadProgressRequestBody extends RequestBody {
     private UCallback callback;
     private long lastTime;
 
+    /**
+     *
+     * @param requestBody 上传请求的主体
+     * @param callback 上传回调
+     */
     public UploadProgressRequestBody(RequestBody requestBody, UCallback callback) {
         this.requestBody = requestBody;
         this.callback = callback;
@@ -60,6 +65,9 @@ public class UploadProgressRequestBody extends RequestBody {
         bufferedSink.flush();
     }
 
+    /**
+     *
+     */
     private final class CountingSink extends ForwardingSink {
         //当前字节长度
         private long currentLength = 0L;
@@ -82,18 +90,23 @@ public class UploadProgressRequestBody extends RequestBody {
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastTime >= 100 || lastTime == 0 || currentLength == totalLength) {
                 lastTime = currentTime;
-                Observable.just(currentLength).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        ViseLog.i("upload progress currentLength:" + currentLength + ",totalLength:" + totalLength);
-                        callback.onProgress(currentLength, totalLength, (100.0f * currentLength) / totalLength);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        callback.onFail(-1, throwable.getMessage());
-                    }
-                });
+
+                // 上传进度回调
+                Observable
+                        .just(currentLength)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<Long>() {
+                            @Override
+                            public void accept(Long aLong) throws Exception {
+                                ViseLog.i("upload progress currentLength:" + currentLength + ",totalLength:" + totalLength);
+                                callback.onProgress(currentLength, totalLength, (100.0f * currentLength) / totalLength);
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                callback.onFail(-1, throwable.getMessage());
+                            }
+                        });
             }
         }
     }

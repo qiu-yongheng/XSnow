@@ -27,9 +27,22 @@ public class OnlineCacheInterceptor implements Interceptor {
         this.cacheControlValue = String.format("max-age=%d", cacheControlValue);
     }
 
+    /**
+     * no-store: 所有内容都不会被缓存到缓存或 Internet 临时文件中
+     * no-cache: 所有内容都不会被缓存
+     * must-revalidate:  如果缓存的内容失效，请求必须发送到服务器/代理以进行重新验证
+     * max-age: 缓存的内容将在 xxx 秒后失效, 这个选项只在HTTP 1.1可用, 并如果和Last-Modified一起使用时, 优先级较高
+     *
+     * @param chain
+     * @return
+     * @throws IOException
+     */
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
+        // 获取响应
         Response originalResponse = chain.proceed(chain.request());
+
+        // 获取响应的缓存策略
         String cacheControl = originalResponse.header("Cache-Control");
         if (TextUtils.isEmpty(cacheControl) || cacheControl.contains("no-store") || cacheControl.contains("no-cache") || cacheControl
                 .contains("must-revalidate") || cacheControl.contains("max-age") || cacheControl.contains("max-stale")) {

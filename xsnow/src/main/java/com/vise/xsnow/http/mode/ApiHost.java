@@ -19,6 +19,10 @@ public class ApiHost {
         setHostHttps(url);
     }
 
+    /**
+     * 给URL添加前缀
+     * @param url
+     */
     public static void setHostHttp(String url) {
         if (url.startsWith("https://") || url.startsWith("http://")) {
             host = url;
@@ -28,6 +32,10 @@ public class ApiHost {
         }
     }
 
+    /**
+     *
+     * @param url
+     */
     public static void setHostHttps(String url) {
         if (url.startsWith("https://") || url.startsWith("http://")) {
             host = url;

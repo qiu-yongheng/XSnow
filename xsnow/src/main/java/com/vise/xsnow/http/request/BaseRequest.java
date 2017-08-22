@@ -221,54 +221,70 @@ public abstract class BaseRequest<R extends BaseRequest> {
             headers.put(httpGlobalConfig.getGlobalHeaders());
         }
 
+        // 添加拦截器
         if (!interceptors.isEmpty()) {
             for (Interceptor interceptor : interceptors) {
                 newBuilder.addInterceptor(interceptor);
             }
         }
 
+        // 添加拦截器
         if (!networkInterceptors.isEmpty()) {
             for (Interceptor interceptor : networkInterceptors) {
                 newBuilder.addNetworkInterceptor(interceptor);
             }
         }
 
+        // 添加头
         if (headers.headersMap.size() > 0) {
             newBuilder.addInterceptor(new HeadersInterceptor(headers.headersMap));
         }
 
+        // 上传拦截
         if (uploadCallback != null) {
             newBuilder.addNetworkInterceptor(new UploadProgressInterceptor(uploadCallback));
         }
 
+        // 读取超时
         if (readTimeOut > 0) {
             newBuilder.readTimeout(readTimeOut, TimeUnit.SECONDS);
         }
 
+        //  写超时
         if (writeTimeOut > 0) {
             newBuilder.readTimeout(writeTimeOut, TimeUnit.SECONDS);
         }
 
+        // 连接超时
         if (connectTimeOut > 0) {
             newBuilder.readTimeout(connectTimeOut, TimeUnit.SECONDS);
         }
 
+        // 是否缓存
         if (isHttpCache) {
             try {
                 if (httpGlobalConfig.getHttpCache() == null) {
+                    // 设置http缓存 (缓存路径, 缓存大小)
                     httpGlobalConfig.httpCache(new Cache(httpGlobalConfig.getHttpCacheDirectory(), ViseConfig.CACHE_MAX_SIZE));
                 }
+
+                // 添加在线缓存拦截
                 httpGlobalConfig.cacheOnline(httpGlobalConfig.getHttpCache());
+                // 添加离线缓存拦截
                 httpGlobalConfig.cacheOffline(httpGlobalConfig.getHttpCache());
             } catch (Exception e) {
                 ViseLog.e("Could not create http cache" + e);
             }
+
+            // okhttp添加缓存
             newBuilder.cache(httpGlobalConfig.getHttpCache());
         }
 
+        // 初始化retrofit
         if (baseUrl != null) {
             Retrofit.Builder newRetrofitBuilder = new Retrofit.Builder();
             newRetrofitBuilder.baseUrl(baseUrl);
+
             if (httpGlobalConfig.getConverterFactory() != null) {
                 newRetrofitBuilder.addConverterFactory(httpGlobalConfig.getConverterFactory());
             }
@@ -278,7 +294,10 @@ public abstract class BaseRequest<R extends BaseRequest> {
             if (httpGlobalConfig.getCallFactory() != null) {
                 newRetrofitBuilder.callFactory(httpGlobalConfig.getCallFactory());
             }
+
             newBuilder.hostnameVerifier(new SSLUtil.UnSafeHostnameVerifier(baseUrl));
+
+            // retrofit添加okhttp
             newRetrofitBuilder.client(newBuilder.build());
             retrofit = newRetrofitBuilder.build();
         } else {
@@ -355,18 +374,25 @@ public abstract class BaseRequest<R extends BaseRequest> {
 
     /**
      * 获取第一级type
+     * Type是 Java 编程语言中所有类型的公共高级接口。它们包括原始类型、参数化类型、数组类型、类型变量和基本类型
      *
      * @param t
      * @param <T>
      * @return
      */
     protected <T> Type getType(T t) {
+        // 反射 getGenericSuperclass(): 获得带有泛型的父类
         Type genType = t.getClass().getGenericSuperclass();
+        // ParameterizedType参数化类型，即泛型
+        // getActualTypeArguments获取参数化类型的数组，泛型可能有多个
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         Type type = params[0];
         Type finalNeedType;
         if (params.length > 1) {
-            if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
+            if (!(type instanceof ParameterizedType)) {
+                throw new IllegalStateException("没有填写泛型参数");
+            }
+
             finalNeedType = ((ParameterizedType) type).getActualTypeArguments()[0];
         } else {
             finalNeedType = type;
@@ -387,7 +413,9 @@ public abstract class BaseRequest<R extends BaseRequest> {
         Type type = params[0];
         Type finalNeedType;
         if (params.length > 1) {
-            if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
+            if (!(type instanceof ParameterizedType)) {
+                throw new IllegalStateException("没有填写泛型参数");
+            }
             finalNeedType = ((ParameterizedType) type).getActualTypeArguments()[0];
         } else {
             if (type instanceof ParameterizedType) {

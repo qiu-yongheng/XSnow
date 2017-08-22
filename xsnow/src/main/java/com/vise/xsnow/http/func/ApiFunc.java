@@ -8,13 +8,17 @@ import java.lang.reflect.Type;
 import io.reactivex.functions.Function;
 import okhttp3.ResponseBody;
 /**
- * @Description: ResponseBody转T
+ * @Description: ResponseBody转T 解析响应数据
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2017-01-05 14:39
  */
 public class ApiFunc<T> implements Function<ResponseBody, T> {
     private Type type;
 
+    /**
+     * 指定数据解析类型
+     * @param type
+     */
     public ApiFunc(Type type) {
         this.type = type;
     }

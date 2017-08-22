@@ -29,9 +29,13 @@ public class HeadersInterceptor implements Interceptor {
         if (headers != null && headers.size() > 0) {
             Set<String> keys = headers.keySet();
             for (String headerKey : keys) {
+
+                //拦截添加请求头
                 builder.addHeader(headerKey, headers.get(headerKey)).build();
             }
         }
+
+        // 返回添加请求头后的response
         return chain.proceed(builder.build());
     }
 }

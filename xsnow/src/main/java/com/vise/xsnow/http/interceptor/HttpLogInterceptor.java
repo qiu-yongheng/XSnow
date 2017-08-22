@@ -42,7 +42,8 @@ public class HttpLogInterceptor implements Interceptor {
     }
 
     public HttpLogInterceptor setLevel(Level level) {
-        if (level == null) throw new NullPointerException("level == null. Use Level.NONE instead.");
+        if (level == null)
+            throw new NullPointerException("level == null. Use Level.NONE instead.");
         this.level = level;
         return this;
     }
@@ -76,6 +77,13 @@ public class HttpLogInterceptor implements Interceptor {
         return logForResponse(response, tookMs);
     }
 
+    /**
+     * 请求日志拦截
+     *
+     * @param request
+     * @param connection
+     * @throws IOException
+     */
     private void logForRequest(Request request, Connection connection) throws IOException {
         boolean logBody = (level == Level.BODY);
         boolean logHeaders = (level == Level.BODY || level == Level.HEADERS);
@@ -90,13 +98,16 @@ public class HttpLogInterceptor implements Interceptor {
             if (logHeaders) {
                 Headers headers = request.headers();
                 for (int i = 0, count = headers.size(); i < count; i++) {
+                    // 打印头
                     log("\t" + headers.name(i) + ": " + headers.value(i));
                 }
 
                 log(" ");
                 if (logBody && hasRequestBody) {
                     if (isPlaintext(requestBody.contentType())) {
-                        log("\t"+requestBody.contentType());
+
+                        // 答应请求主体
+                        log("\t" + requestBody.contentType());
                         bodyToString(request);
                     } else {
                         log("\tbody: maybe [file part] , too large too print , ignored!");
@@ -110,6 +121,13 @@ public class HttpLogInterceptor implements Interceptor {
         }
     }
 
+    /**
+     * 响应日志拦截
+     *
+     * @param response
+     * @param tookMs
+     * @return
+     */
     private Response logForResponse(Response response, long tookMs) {
         Response.Builder builder = response.newBuilder();
         Response clone = builder.build();
@@ -122,6 +140,7 @@ public class HttpLogInterceptor implements Interceptor {
             if (logHeaders) {
                 Headers headers = clone.headers();
                 for (int i = 0, count = headers.size(); i < count; i++) {
+                    // 打印头
                     log("\t" + headers.name(i) + ": " + headers.value(i));
                 }
                 log(" ");
@@ -147,6 +166,8 @@ public class HttpLogInterceptor implements Interceptor {
     /**
      * Returns true if the body in question probably contains human readable text. Uses a small sample
      * of code points to detect unicode control characters commonly used in binary file signatures.
+     * <p>
+     * 判断是否是明文
      */
     private boolean isPlaintext(MediaType mediaType) {
         if (mediaType.type() != null && mediaType.type().equals("text")) {
@@ -164,19 +185,32 @@ public class HttpLogInterceptor implements Interceptor {
         return false;
     }
 
+    /**
+     * 打印主体
+     *
+     * @param request
+     */
     private void bodyToString(Request request) {
         try {
+            // 复制一个request
             final Request copy = request.newBuilder().build();
             final Buffer buffer = new Buffer();
+
+            // 获取request的主体
             RequestBody requestBody = copy.body();
             if (requestBody != null) {
+
+                // 把主体写到buffer
                 requestBody.writeTo(buffer);
                 Charset charset = UTF8;
+
+                //
                 MediaType contentType = requestBody.contentType();
                 if (contentType != null) {
                     charset = contentType.charset(UTF8);
                 }
                 if (charset != null) {
+                    // 打印主体
                     log("\tbody:" + URLDecoder.decode(buffer.readString(charset), UTF8.name()));
                 }
             }

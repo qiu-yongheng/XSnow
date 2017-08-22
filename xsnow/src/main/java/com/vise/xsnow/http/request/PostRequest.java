@@ -42,6 +42,7 @@ public class PostRequest extends BaseHttpRequest<PostRequest> {
         if (stringBuilder.length() > 0) {
             suffixUrl = suffixUrl + stringBuilder.toString();
         }
+
         if (forms != null && forms.size() > 0) {
             if (params != null && params.size() > 0) {
                 Iterator<Map.Entry<String, String>> entryIterator = params.entrySet().iterator();
@@ -55,13 +56,19 @@ public class PostRequest extends BaseHttpRequest<PostRequest> {
             }
             return apiService.postForm(suffixUrl, forms).compose(this.<T>norTransformer(type));
         }
+
+
         if (requestBody != null) {
             return apiService.postBody(suffixUrl, requestBody).compose(this.<T>norTransformer(type));
         }
+
+
         if (content != null && mediaType != null) {
             requestBody = RequestBody.create(mediaType, content);
             return apiService.postBody(suffixUrl, requestBody).compose(this.<T>norTransformer(type));
         }
+
+
         return apiService.post(suffixUrl, params).compose(this.<T>norTransformer(type));
     }
 

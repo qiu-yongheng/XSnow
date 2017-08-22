@@ -45,6 +45,11 @@ public class ApiException extends Exception {
         return message + "(code:" + code + ")";
     }
 
+    /**
+     *
+     * @param e
+     * @return
+     */
     public static ApiException handleException(Throwable e) {
         ApiException ex;
         if (e instanceof HttpException) {

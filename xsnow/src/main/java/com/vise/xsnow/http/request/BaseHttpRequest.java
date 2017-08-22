@@ -50,7 +50,9 @@ public abstract class BaseHttpRequest<R extends BaseHttpRequest> extends BaseReq
     }
 
     public <T> Observable<T> request(Type type) {
+        // 全局配置
         generateGlobalConfig();
+        // 局部配置
         generateLocalConfig();
         return execute(type);
     }
@@ -67,9 +69,14 @@ public abstract class BaseHttpRequest<R extends BaseHttpRequest> extends BaseReq
         execute(callback);
     }
 
+    /**
+     * 局部配置
+     */
     @Override
     protected void generateLocalConfig() {
         super.generateLocalConfig();
+
+        // 请求参数
         if (httpGlobalConfig.getGlobalParams() != null) {
             params.putAll(httpGlobalConfig.getGlobalParams());
         }
@@ -79,21 +86,26 @@ public abstract class BaseHttpRequest<R extends BaseHttpRequest> extends BaseReq
         if (retryDelayMillis <= 0) {
             retryDelayMillis = httpGlobalConfig.getRetryDelayMillis();
         }
+
+        // 本地缓存
         if (isLocalCache) {
             if (cacheKey != null) {
                 ViseHttp.getApiCacheBuilder().cacheKey(cacheKey);
             } else {
                 ViseHttp.getApiCacheBuilder().cacheKey(ApiHost.getHost());
             }
+
             if (cacheTime > 0) {
                 ViseHttp.getApiCacheBuilder().cacheTime(cacheTime);
             } else {
                 ViseHttp.getApiCacheBuilder().cacheTime(ViseConfig.CACHE_NEVER_EXPIRE);
             }
         }
+
         if (baseUrl != null && isLocalCache && cacheKey == null) {
             ViseHttp.getApiCacheBuilder().cacheKey(baseUrl);
         }
+
         apiService = retrofit.create(ApiService.class);
     }
 
@@ -103,6 +115,12 @@ public abstract class BaseHttpRequest<R extends BaseHttpRequest> extends BaseReq
 
     protected abstract <T> void execute(ACallback<T> callback);
 
+    /**
+     * 解析响应数据
+     * @param type
+     * @param <T>
+     * @return
+     */
     protected <T> ObservableTransformer<ResponseBody, T> norTransformer(final Type type) {
         return new ObservableTransformer<ResponseBody, T>() {
             @Override

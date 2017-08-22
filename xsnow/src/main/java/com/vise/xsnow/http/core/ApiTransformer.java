@@ -10,7 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * @Description: 转换器
+ * @Description: 转换器, 请求失败时, 重新订阅
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 17/7/22 22:11.
  */
@@ -30,6 +30,13 @@ public class ApiTransformer {
         };
     }
 
+    /**
+     * retryWhen将onError中的Throwable传递给一个函数，这个函数产生另一个Observable，retryWhen观察它的结果再决定是不是要重新订阅原始的Observable
+     * @param retryCount
+     * @param retryDelayMillis
+     * @param <T>
+     * @return
+     */
     public static <T> ObservableTransformer<T, T> norTransformer(final int retryCount, final int retryDelayMillis) {
         return new ObservableTransformer<T, T>() {
             @Override

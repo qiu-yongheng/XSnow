@@ -21,11 +21,23 @@ public class DeleteRequest extends BaseHttpRequest<DeleteRequest> {
         super(suffixUrl);
     }
 
+    /**
+     * 解析响应数据
+     * @param type
+     * @param <T>
+     * @return
+     */
     @Override
     protected <T> Observable<T> execute(Type type) {
         return apiService.delete(suffixUrl, params).compose(this.<T>norTransformer(type));
     }
 
+    /**
+     * 把对象转换成CacheResult
+     * @param type
+     * @param <T>
+     * @return
+     */
     @Override
     protected <T> Observable<CacheResult<T>> cacheExecute(Type type) {
         return this.<T>execute(type).compose(ViseHttp.getApiCache().<T>transformer(cacheMode, type));
@@ -35,6 +47,7 @@ public class DeleteRequest extends BaseHttpRequest<DeleteRequest> {
     protected <T> void execute(ACallback<T> callback) {
         DisposableObserver disposableObserver = new ApiCallbackSubscriber(callback);
         if (super.tag != null) {
+            // 保存请求记录
             ApiManager.get().add(super.tag, disposableObserver);
         }
         if (isLocalCache) {

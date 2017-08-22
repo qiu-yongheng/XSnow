@@ -75,17 +75,20 @@ public class DownloadRequest extends BaseHttpRequest<DownloadRequest> {
                         return Flowable.create(new FlowableOnSubscribe<DownProgress>() {
                             @Override
                             public void subscribe(FlowableEmitter<DownProgress> subscriber) throws Exception {
+                                // 下载路径
                                 File dir = getDiskCacheDir(ViseHttp.getContext(), dirName);
                                 if (!dir.exists()) {
                                     dir.mkdir();
                                 }
+
+                                // 下载文件
                                 File file = new File(dir.getPath() + File.separator + fileName);
                                 saveFile(subscriber, file, responseBody);
                             }
                         }, BackpressureStrategy.LATEST);
                     }
                 })
-                .sample(1, TimeUnit.SECONDS)
+                .sample(1, TimeUnit.SECONDS) // 指定的时间间隔定时采样
                 .observeOn(AndroidSchedulers.mainThread())
                 .toObservable()
                 .retryWhen(new ApiRetryFunc(retryCount, retryDelayMillis));
@@ -105,6 +108,13 @@ public class DownloadRequest extends BaseHttpRequest<DownloadRequest> {
         this.execute(getType(callback)).subscribe(disposableObserver);
     }
 
+    /**
+     * 下载文件
+     * TODO 没有实现断点下载
+     * @param sub
+     * @param saveFile
+     * @param resp
+     */
     private void saveFile(FlowableEmitter<? super DownProgress> sub, File saveFile, ResponseBody resp) {
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -114,17 +124,22 @@ public class DownloadRequest extends BaseHttpRequest<DownloadRequest> {
                 int downloadSize = 0;
                 byte[] buffer = new byte[8192];
 
+                // 记录下载进度
                 DownProgress downProgress = new DownProgress();
                 inputStream = resp.byteStream();
                 outputStream = new FileOutputStream(saveFile);
 
+                // 总长度
                 long contentLength = resp.contentLength();
                 downProgress.setTotalSize(contentLength);
 
                 while ((readLen = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, readLen);
+                    // 记录下载长度
                     downloadSize += readLen;
                     downProgress.setDownloadSize(downloadSize);
+
+                    // 更新进度
                     sub.onNext(downProgress);
                 }
                 outputStream.flush();
@@ -145,15 +160,21 @@ public class DownloadRequest extends BaseHttpRequest<DownloadRequest> {
         }
     }
 
+    /**
+     * 获取缓存目录
+     * @param context
+     * @param dirName
+     * @return
+     */
     private File getDiskCacheDir(Context context, String dirName) {
         String cachePath;
-        if ((Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                || !Environment.isExternalStorageRemovable())
+        if ((Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) || !Environment.isExternalStorageRemovable())
                 && context.getExternalCacheDir() != null) {
             cachePath = context.getExternalCacheDir().getPath();
         } else {
             cachePath = context.getCacheDir().getPath();
         }
+        // separator : ('/')
         return new File(cachePath + File.separator + dirName);
     }
 }

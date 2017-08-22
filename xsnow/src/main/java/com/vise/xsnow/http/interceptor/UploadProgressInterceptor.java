@@ -27,15 +27,21 @@ public class UploadProgressInterceptor implements Interceptor {
         }
     }
 
+    /**
+     *
+     * @param chain
+     * @return
+     * @throws IOException
+     */
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request originalRequest = chain.request();
         if (originalRequest.body() == null) {
             return chain.proceed(originalRequest);
         }
+
         Request progressRequest = originalRequest.newBuilder()
-                .method(originalRequest.method(),
-                        new UploadProgressRequestBody(originalRequest.body(), callback))
+                .method(originalRequest.method(), new UploadProgressRequestBody(originalRequest.body(), callback))
                 .build();
         return chain.proceed(progressRequest);
     }
