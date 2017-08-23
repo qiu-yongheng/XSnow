@@ -17,6 +17,7 @@ import io.reactivex.functions.Predicate;
 public class FirstCacheStrategy<T> extends CacheStrategy<T> {
     @Override
     public <T> Observable<CacheResult<T>> execute(ApiCache apiCache, String cacheKey, Observable<T> source, Type type) {
+        // 缓存
         Observable<CacheResult<T>> cache = loadCache(apiCache, cacheKey, type);
         cache.onErrorReturn(new Function<Throwable, CacheResult<T>>() {
             @Override
@@ -24,7 +25,10 @@ public class FirstCacheStrategy<T> extends CacheStrategy<T> {
                 return null;
             }
         });
+
         Observable<CacheResult<T>> remote = loadRemote(apiCache, cacheKey, source);
+
+        // concat(cache, remote): 先发射cache, 再发射remote
         return Observable.concat(cache, remote).filter(new Predicate<CacheResult<T>>() {
             @Override
             public boolean test(CacheResult<T> tCacheResult) throws Exception {

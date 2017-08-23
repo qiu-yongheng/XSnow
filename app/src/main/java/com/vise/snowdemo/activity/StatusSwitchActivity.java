@@ -84,6 +84,7 @@ public class StatusSwitchActivity extends BaseActivity {
                         }).start();
                     }
                 }).build();
+
         mLayoutMain.addView(mStatusLayoutManager.getStatusLayout());
         mStatusLayoutManager.showLoadingView();
     }

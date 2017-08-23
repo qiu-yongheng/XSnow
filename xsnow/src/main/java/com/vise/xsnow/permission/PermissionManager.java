@@ -35,8 +35,14 @@ public class PermissionManager {
         return this;
     }
 
+    /**
+     * 请求权限
+     * @param permissionCallback
+     * @param permissions
+     */
     public void request(final OnPermissionCallback permissionCallback, final String... permissions) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && this.activity != null && permissionCallback != null) {
+
             RxPermissions rxPermissions = new RxPermissions(this.activity);
             rxPermissions.requestEach(permissions).subscribe(new Consumer<Permission>() {
                 @Override

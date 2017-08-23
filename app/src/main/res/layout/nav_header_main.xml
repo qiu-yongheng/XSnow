@@ -30,6 +30,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:autoLink="all"
-        android:text="http://www.xiaoyaoyou1212.com"/>
+        android:text="https://github.com/qiu-yongheng"/>
 
 </LinearLayout>

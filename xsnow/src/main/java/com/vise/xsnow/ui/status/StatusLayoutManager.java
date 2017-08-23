@@ -66,7 +66,6 @@ public class StatusLayoutManager {
         mStatusLayout.setStatusLayoutManager(this);
     }
 
-
     /**
      * 显示加载视图
      */

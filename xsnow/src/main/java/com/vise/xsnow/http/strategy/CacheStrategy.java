@@ -19,6 +19,14 @@ import io.reactivex.schedulers.Schedulers;
  * @date: 16/12/31 14:28.
  */
 abstract class CacheStrategy<T> implements ICacheStrategy<T> {
+    /**
+     * 读取缓存数据
+     * @param apiCache
+     * @param key
+     * @param type
+     * @param <T>
+     * @return
+     */
     <T> Observable<CacheResult<T>> loadCache(final ApiCache apiCache, final String key, final Type type) {
         return apiCache.<T>get(key).filter(new Predicate<String>() {
             @Override
@@ -35,6 +43,14 @@ abstract class CacheStrategy<T> implements ICacheStrategy<T> {
         });
     }
 
+    /**
+     * 读取remote数据
+     * @param apiCache
+     * @param key
+     * @param source
+     * @param <T>
+     * @return
+     */
     <T> Observable<CacheResult<T>> loadRemote(final ApiCache apiCache, final String key, Observable<T> source) {
         return source.map(new Function<T, CacheResult<T>>() {
             @Override

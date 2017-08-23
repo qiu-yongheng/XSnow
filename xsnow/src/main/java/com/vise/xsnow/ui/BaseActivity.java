@@ -63,6 +63,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     protected <E extends View> E F(int viewId) {
         E view = (E) mViews.get(viewId);
+
         if (view == null) {
             view = (E) findViewById(viewId);
             mViews.put(viewId, view);

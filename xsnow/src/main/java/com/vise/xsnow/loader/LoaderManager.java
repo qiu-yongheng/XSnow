@@ -9,12 +9,22 @@ public class LoaderManager {
     private static ILoader innerLoader;
     private static ILoader externalLoader;
 
+    /**
+     * 设置图片框架
+     * @param loader
+     */
     public static void setLoader(ILoader loader) {
         if (externalLoader == null && loader != null) {
             externalLoader = loader;
         }
     }
 
+    /**
+     * 获取当前图片框架
+     * 1. 框架默认使用glide进行图片加载
+     * 2. 如果要使用其他图片框架, 可以随意切换
+     * @return
+     */
     public static ILoader getLoader() {
         if (innerLoader == null) {
             synchronized (LoaderManager.class) {

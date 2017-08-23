@@ -110,7 +110,9 @@ public class UploadDownActivity extends BaseActivity {
             public void onFail(int errCode, String errMsg) {
                 mUpload_btn.setClickable(true);
                 ViseLog.i("upload errorCode:" + errCode + ",errorMsg:" + errMsg);
-            }}).addParam("strategyId", "41")
+            }
+        })
+                .addParam("strategyId", "41")
                 .addParam("title", "初秋美白养成计划")
                 .addParam("tagIds", "95,96,208")
                 .addParam("content", "夏天晒黑了？初秋正是美白的好时机，快快行动起来。")
@@ -118,17 +120,17 @@ public class UploadDownActivity extends BaseActivity {
                 .addFile("androidPicFile", getUploadFile(mContext, "test.jpg"))
                 .baseUrl("https://200.200.200.50/")
                 .request(new ACallback<Object>() {
-            @Override
-            public void onSuccess(Object data) {
-                ViseLog.i("upload success:" + data);
-            }
+                    @Override
+                    public void onSuccess(Object data) {
+                        ViseLog.i("upload success:" + data);
+                    }
 
-            @Override
-            public void onFail(int errCode, String errMsg) {
-                mUpload_btn.setClickable(true);
-                ViseLog.i("upload errorCode:" + errCode + ",errorMsg:" + errMsg);
-            }
-        });
+                    @Override
+                    public void onFail(int errCode, String errMsg) {
+                        mUpload_btn.setClickable(true);
+                        ViseLog.i("upload errorCode:" + errCode + ",errorMsg:" + errMsg);
+                    }
+                });
     }
 
     private void download() {

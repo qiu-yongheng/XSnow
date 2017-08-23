@@ -44,6 +44,9 @@ public class StatusLayout extends FrameLayout {
         addAllLayoutToLayout();
     }
 
+    /**
+     * 添加所有的布局到layout中
+     */
     private void addAllLayoutToLayout() {
         if (mStatusLayoutManager.getContentLayoutResId() != 0) {
             addLayoutResId(mStatusLayoutManager.getContentLayoutResId(), StatusType.CONTENT.getType());
@@ -137,6 +140,7 @@ public class StatusLayout extends FrameLayout {
     private boolean inflateLayout(int id) {
         boolean isShow;
         if (mLayoutSparseArray.get(id) != null) return true;
+
         if (id == StatusType.NETWORK_ERROR.getType() && mStatusLayoutManager.getNetworkErrorView() != null) {
             View view = mStatusLayoutManager.getNetworkErrorView().inflate();
             retryLoad(view, mStatusLayoutManager.getNetworkErrorRetryViewId());

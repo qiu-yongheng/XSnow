@@ -36,6 +36,8 @@ public class RxPermissions {
     private RxPermissionsFragment getRxPermissionsFragment(Activity activity) {
         RxPermissionsFragment rxPermissionsFragment = findRxPermissionsFragment(activity);
         boolean isNewInstance = rxPermissionsFragment == null;
+
+        // 如果没有创建fragment, 新建
         if (isNewInstance) {
             rxPermissionsFragment = new RxPermissionsFragment();
             FragmentManager fragmentManager = activity.getFragmentManager();
@@ -124,6 +126,12 @@ public class RxPermissions {
         return Observable.just(new Object()).compose(ensureEach(permissions));
     }
 
+    /**
+     *
+     * @param trigger
+     * @param permissions
+     * @return
+     */
     private Observable<Permission> request(final Observable<?> trigger, final String... permissions) {
         if (permissions == null || permissions.length == 0) {
             throw new IllegalArgumentException("RxPermissions.request/requestEach requires at least one input permission");
@@ -137,22 +145,41 @@ public class RxPermissions {
                 });
     }
 
+    /**
+     *
+     * @param permissions
+     * @return
+     */
     private Observable<?> pending(final String... permissions) {
         for (String p : permissions) {
             if (!mRxPermissionsFragment.containsByPermission(p)) {
                 return Observable.empty();
             }
         }
+        //
         return Observable.just(new Object());
     }
 
+    /**
+     *
+     * @param trigger
+     * @param pending
+     * @return
+     */
     private Observable<?> oneOf(Observable<?> trigger, Observable<?> pending) {
         if (trigger == null) {
             return Observable.just(new Object());
         }
+
+        // merge: 将多个Observables的输出合并
         return Observable.merge(trigger, pending);
     }
 
+    /**
+     *
+     * @param permissions
+     * @return
+     */
     @TargetApi(Build.VERSION_CODES.M)
     private Observable<Permission> requestImplementation(final String... permissions) {
         List<Observable<Permission>> list = new ArrayList<>(permissions.length);
@@ -162,15 +189,18 @@ public class RxPermissions {
         // At the end, the observables are combined to have a unique response.
         for (String permission : permissions) {
             ViseLog.i("Requesting permission " + permission);
+
             if (isGranted(permission)) {
                 // Already granted, or not Android M
                 // Return a granted Permission object.
+                // 权限被允许
                 list.add(Observable.just(new Permission(permission, true, false)));
                 continue;
             }
 
             if (isRevoked(permission)) {
                 // Revoked by a policy, return a denied Permission object.
+                // 权限被取消
                 list.add(Observable.just(new Permission(permission, false, false)));
                 continue;
             }
@@ -186,6 +216,7 @@ public class RxPermissions {
             list.add(subject);
         }
 
+        // 如果未申请权限不为空, 申请权限
         if (!unrequestedPermissions.isEmpty()) {
             String[] unrequestedPermissionsArray = unrequestedPermissions.toArray(new String[unrequestedPermissions.size()]);
             requestPermissionsFromFragment(unrequestedPermissionsArray);
@@ -223,6 +254,10 @@ public class RxPermissions {
         return true;
     }
 
+    /**
+     * 请求权限
+     * @param permissions
+     */
     @TargetApi(Build.VERSION_CODES.M)
     private void requestPermissionsFromFragment(String[] permissions) {
         ViseLog.i("requestPermissionsFromFragment " + TextUtils.join(", ", permissions));
@@ -249,6 +284,10 @@ public class RxPermissions {
         return isMarshmallow() && mRxPermissionsFragment.isRevoked(permission);
     }
 
+    /**
+     * 判断是否是安卓5.0以上系统
+     * @return
+     */
     private boolean isMarshmallow() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }

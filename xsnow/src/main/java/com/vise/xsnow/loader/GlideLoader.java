@@ -61,9 +61,12 @@ public class GlideLoader implements ILoader {
     private void load(DrawableTypeRequest request, ImageView target, Options options) {
         if (options == null) options = Options.defaultOptions();
 
+        // 设置加载中的图片
         if (options.loadingResId != Options.RES_NONE) {
             request.placeholder(options.loadingResId);
         }
+
+        // 设置加载失败的图片
         if (options.loadErrorResId != Options.RES_NONE) {
             request.error(options.loadErrorResId);
         }
