@@ -33,13 +33,14 @@ public class ApiCache {
     private String cacheKey;
 
     /**
-     * 自定义的订阅者
+     * 自定义的被订阅者
      * @param <T>
      */
     private static abstract class SimpleSubscribe<T> implements ObservableOnSubscribe<T> {
         @Override
         public void subscribe(ObservableEmitter<T> subscriber) throws Exception {
             try {
+                // 获取 数据
                 T data = execute();
                 if (!subscriber.isDisposed() && data != null) {
                     subscriber.onNext(data);
@@ -71,8 +72,8 @@ public class ApiCache {
     }
 
     /**
-     * 转换
-     * @param cacheMode
+     * 转换成指定缓存策略的class, 调用指定缓存的execute方法将数据转换成CacheResult
+     * @param cacheMode 缓存策略枚举
      * @param type
      * @param <T>
      * @return
@@ -119,18 +120,35 @@ public class ApiCache {
         });
     }
 
+    /**
+     * 是否包含key对应的缓存
+     * @param key
+     * @return
+     */
     public boolean containsKey(final String key) {
         return diskCache.contains(key);
     }
 
+    /**
+     * 移除key对应的缓存
+     * @param key
+     */
     public void remove(final String key) {
         diskCache.remove(key);
     }
 
+    /**
+     * 缓存是否关闭
+     * @return
+     */
     public boolean isClosed() {
         return diskCache.isClosed();
     }
 
+    /**
+     * 清空缓存
+     * @return
+     */
     public Disposable clear() {
         return Observable.create(new SimpleSubscribe<Boolean>() {
             @Override
@@ -146,6 +164,11 @@ public class ApiCache {
         });
     }
 
+    /**
+     * 根据类全名创建class
+     * @param cacheMode 缓存策略枚举, getClassName()可以获取枚举封装的类名
+     * @return
+     */
     public ICacheStrategy loadStrategy(CacheMode cacheMode) {
         try {
             String pkName = ICacheStrategy.class.getPackage().getName();

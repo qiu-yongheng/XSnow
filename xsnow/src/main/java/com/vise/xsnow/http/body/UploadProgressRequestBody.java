@@ -42,11 +42,19 @@ public class UploadProgressRequestBody extends RequestBody {
         }
     }
 
+    /**
+     * 文件类型
+     * @return
+     */
     @Override
     public MediaType contentType() {
         return requestBody.contentType();
     }
 
+    /**
+     * 文件长度
+     * @return
+     */
     @Override
     public long contentLength() {
         try {

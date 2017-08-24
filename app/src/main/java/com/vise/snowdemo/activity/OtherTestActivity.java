@@ -139,6 +139,7 @@ public class OtherTestActivity extends BaseActivity {
 
     @Subscribe()
     public void showAuthor(IEvent event) {
+        ViseLog.i("订阅了事件");
         if (event != null && event instanceof AuthorEvent) {
             ViseLog.i("Receive Event Message:" + ((AuthorEvent) event).getAuthorModel());
             DialogUtil.showTips(mContext, "Receive Event Message", "OtherTestActivity:\n" + ((AuthorEvent) event).getAuthorModel().toString());

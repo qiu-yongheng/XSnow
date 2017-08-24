@@ -26,6 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         mContext = this;
         mViews = new SparseArray<>();
         if (isRegisterEvent()) {
+            // getBus()获取的 RxBusImpl.java 对象是单例的
             BusManager.getBus().register(this);
         }
         ActivityManager.getInstance().addActivity(this);

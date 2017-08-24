@@ -55,6 +55,7 @@ public class HttpLogInterceptor implements Interceptor {
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
         Request request = chain.request();
+        // 如果不需要拦截日志, 直接返回
         if (level == Level.NONE) {
             return chain.proceed(request);
         }
@@ -87,12 +88,16 @@ public class HttpLogInterceptor implements Interceptor {
     private void logForRequest(Request request, Connection connection) throws IOException {
         boolean logBody = (level == Level.BODY);
         boolean logHeaders = (level == Level.BODY || level == Level.HEADERS);
+
+        // 请求体
         RequestBody requestBody = request.body();
         boolean hasRequestBody = requestBody != null;
+        // 获取HTTP协议类型
         Protocol protocol = connection != null ? connection.protocol() : Protocol.HTTP_1_1;
 
         try {
             String requestStartMessage = "--> " + request.method() + ' ' + request.url() + ' ' + protocol;
+            // 打印请求信息
             log(requestStartMessage);
 
             if (logHeaders) {

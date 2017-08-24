@@ -16,11 +16,14 @@ import io.reactivex.disposables.CompositeDisposable;
  */
 public class RxBusImpl extends EventBase implements IBus {
 
+    /**
+     * RxBusImpl是单例的, 每个类注册事件监听, 事件集合都会叠加到 mEventCompositeMap 中
+     */
     private ConcurrentMap<Object, EventComposite> mEventCompositeMap = new ConcurrentHashMap<>();
 
     /**
      * 注册事件监听
-     * @param object
+     * @param object 需要注册事件的class
      */
     @Override
     public void register(Object object) {
@@ -28,7 +31,9 @@ public class RxBusImpl extends EventBase implements IBus {
             throw new NullPointerException("Object to register must not be null.");
         }
         CompositeDisposable compositeDisposable = new CompositeDisposable();
+        // 找到有注解的方法, 并订阅
         EventComposite subscriberMethods = EventFind.findAnnotatedSubscriberMethods(object, compositeDisposable);
+        // 保存事件集合, 当取消事件监听时, 把集合中的事件全部取消
         mEventCompositeMap.put(object, subscriberMethods);
 
         if (!STICKY_EVENT_MAP.isEmpty()) {//如果有粘性事件，则发送粘性事件
@@ -47,6 +52,7 @@ public class RxBusImpl extends EventBase implements IBus {
         }
         EventComposite subscriberMethods = mEventCompositeMap.get(object);
         if (subscriberMethods != null) {
+            // 取消时间监听
             subscriberMethods.getCompositeDisposable().dispose();
         }
         mEventCompositeMap.remove(object);

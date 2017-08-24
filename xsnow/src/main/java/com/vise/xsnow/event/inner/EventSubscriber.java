@@ -18,6 +18,12 @@ class EventSubscriber extends EventBase {
     private final ThreadMode thread;
     private Disposable disposable;
 
+    /**
+     *
+     * @param target
+     * @param method
+     * @param thread
+     */
     public EventSubscriber(Object target, Method method, ThreadMode thread) {
         if (target == null) {
             throw new NullPointerException("SubscriberEvent target cannot be null.");
@@ -44,8 +50,10 @@ class EventSubscriber extends EventBase {
      * @param aClass
      */
     private void subscribeEvent(Class aClass) {
-        disposable = toFlowable(aClass).subscribeOn(Schedulers.io()).observeOn(ThreadMode.getScheduler
-                (thread)).subscribe(new Consumer<Object>() {
+        disposable = toFlowable(aClass)
+                .subscribeOn(Schedulers.io())
+                .observeOn(ThreadMode.getScheduler(thread))
+                .subscribe(new Consumer<Object>() {
             @Override
             public void accept(Object event) throws Exception {
                 try {
@@ -69,6 +77,7 @@ class EventSubscriber extends EventBase {
      */
     public final void handleEvent(Object event) throws InvocationTargetException {
         try {
+            // 调用方法
             method.invoke(target, event);
         } catch (IllegalAccessException e) {
             throw new AssertionError(e);

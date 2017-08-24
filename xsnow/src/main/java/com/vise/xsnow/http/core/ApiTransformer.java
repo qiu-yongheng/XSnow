@@ -15,7 +15,11 @@ import io.reactivex.schedulers.Schedulers;
  * @date: 17/7/22 22:11.
  */
 public class ApiTransformer {
-
+    /**
+     * 请求重试机制
+     * @param <T>
+     * @return
+     */
     public static <T> ObservableTransformer<T, T> norTransformer() {
         return new ObservableTransformer<T, T>() {
             @Override

@@ -126,6 +126,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Subscribe
     public void showAuthor(IEvent event) {
+        ViseLog.i("订阅了事件");
         if (event != null && event instanceof AuthorEvent) {
             ViseLog.i("Receive Event Message:" + ((AuthorEvent) event).getAuthorModel());
             DialogUtil.showTips(mContext, "Receive Event Message", "MainActivity:\n" + ((AuthorEvent) event).getAuthorModel().toString());

@@ -34,6 +34,7 @@ public class ApiRetryFunc implements Function<Observable<? extends Throwable>, O
                     @Override
                     public ObservableSource<?> apply(Throwable throwable) throws Exception {
 
+                        // 如果异常是连接异常, 进行重试
                         if (++retryCount <= maxRetries && (throwable instanceof SocketTimeoutException || throwable instanceof ConnectException)) {
                             ViseLog.d("get response data error, it will try after " + retryDelayMillis
                                     + " millisecond, retry count " + retryCount);
@@ -41,6 +42,7 @@ public class ApiRetryFunc implements Function<Observable<? extends Throwable>, O
                             // 在指定时间后, 发射 0 , 结合retryWhen操作符, 如果有数据进行发射, 就进行重新订阅
                             return Observable.timer(retryDelayMillis, TimeUnit.MILLISECONDS);
                         }
+
                         return Observable.error(ApiException.handleException(throwable));
                     }
                 });

@@ -42,6 +42,11 @@ public class EventComposite extends EventBase {
         this.subscriberEvents = subscriberEvents;
     }
 
+    /**
+     * @param compositeDisposable 复合事件容器
+     * @param object              标示(class)
+     * @param subscriberEvents    保存事件订阅者的集合
+     */
     public EventComposite(CompositeDisposable compositeDisposable, Object object, Set<EventSubscriber> subscriberEvents) {
         this.compositeDisposable = compositeDisposable;
         this.object = object;
@@ -50,6 +55,7 @@ public class EventComposite extends EventBase {
 
     /**
      * 发送粘性事件
+     *
      * @param objectMap
      */
     public final void subscriberSticky(Map<Class<?>, Object> objectMap) {
@@ -59,6 +65,8 @@ public class EventComposite extends EventBase {
                 if (classObjectEntry.getKey() == subscriberEvent.getParameter()) {
                     try {
                         classes.add(classObjectEntry.getKey());
+
+                        // 分发事件, 并执行方法
                         subscriberEvent.handleEvent(classObjectEntry.getValue());
                     } catch (InvocationTargetException e) {
                         e.printStackTrace();

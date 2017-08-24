@@ -46,7 +46,7 @@ public class ApiException extends Exception {
     }
 
     /**
-     *
+     * 处理异常
      * @param e
      * @return
      */
