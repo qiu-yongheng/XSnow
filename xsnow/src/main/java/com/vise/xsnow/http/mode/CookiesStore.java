@@ -37,20 +37,16 @@ public class CookiesStore {
         cookiePrefs = context.getSharedPreferences(ViseConfig.COOKIE_PREFS, 0);
         cookies = new HashMap<>();
         Map<String, ?> prefsMap = cookiePrefs.getAll();
-
         for (Map.Entry<String, ?> entry : prefsMap.entrySet()) {
             String[] cookieNames = TextUtils.split((String) entry.getValue(), ",");
-
             for (String name : cookieNames) {
                 String encodedCookie = cookiePrefs.getString(name, null);
-
                 if (encodedCookie != null) {
                     Cookie decodedCookie = decodeCookie(encodedCookie);
                     if (decodedCookie != null) {
                         if (!cookies.containsKey(entry.getKey())) {
                             cookies.put(entry.getKey(), new ConcurrentHashMap<String, Cookie>());
                         }
-                        // 保存cookies
                         cookies.get(entry.getKey()).put(name, decodedCookie);
                     }
                 }
@@ -66,7 +62,8 @@ public class CookiesStore {
         String name = getCookieToken(cookie);
 
         //将cookies缓存到内存中 如果缓存过期 就重置此cookie
-        if (!cookie.persistent()) {
+        boolean hasExpired = cookie.persistent() && ((cookie.expiresAt() - System.currentTimeMillis()) / 1000 < 0);
+        if (hasExpired) {
             if (!cookies.containsKey(url.host())) {
                 cookies.put(url.host(), new ConcurrentHashMap<String, Cookie>());
             }
@@ -79,7 +76,9 @@ public class CookiesStore {
 
         //将cookies持久化到本地
         SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
-        prefsWriter.putString(url.host(), TextUtils.join(",", cookies.get(url.host()).keySet()));
+        if (cookies.get(url.host()) != null) {
+            prefsWriter.putString(url.host(), TextUtils.join(",", cookies.get(url.host()).keySet()));
+        }
         prefsWriter.putString(name, encodeCookie(new OkHttpCookies(cookie)));
         prefsWriter.apply();
     }

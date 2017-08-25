@@ -35,7 +35,7 @@ public class MyApplication extends Application {
     private void initLog() {
         ViseLog.getLogConfig()
                 .configAllowLog(true)//是否输出日志
-                .configShowBorders(false);//是否排版显示
+                .configShowBorders(true);//是否排版显示
         ViseLog.plant(new LogcatTree());//添加打印日志信息到Logcat的树
     }
 

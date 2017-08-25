@@ -20,7 +20,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 abstract class CacheStrategy<T> implements ICacheStrategy<T> {
     /**
-     * 读取缓存数据
+     * 读取本地缓存数据
      * @param apiCache
      * @param key
      * @param type
@@ -44,7 +44,7 @@ abstract class CacheStrategy<T> implements ICacheStrategy<T> {
     }
 
     /**
-     * 读取remote数据
+     * 保存数据到本地缓存后, 返回remote数据
      * @param apiCache
      * @param key
      * @param source
