@@ -27,8 +27,7 @@ public class RxPermissionsFragment extends Fragment {
     // Once granted or denied, they are removed from it.(当权限被授权或取消, 都会从集合中移除)
     private Map<String, PublishSubject<Permission>> mSubjects = new HashMap<>();
 
-    public RxPermissionsFragment() {
-    }
+    public RxPermissionsFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

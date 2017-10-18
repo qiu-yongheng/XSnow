@@ -33,11 +33,16 @@ public class RxPermissions {
         mRxPermissionsFragment = getRxPermissionsFragment(activity);
     }
 
+    /**
+     * 获取RxPermissionsFragment对象(用来申请权限与接收回调)
+     * @param activity
+     * @return
+     */
     private RxPermissionsFragment getRxPermissionsFragment(Activity activity) {
         RxPermissionsFragment rxPermissionsFragment = findRxPermissionsFragment(activity);
         boolean isNewInstance = rxPermissionsFragment == null;
 
-        // 如果没有创建fragment, 新建
+        // 如果没有创建fragment, 新建并保存
         if (isNewInstance) {
             rxPermissionsFragment = new RxPermissionsFragment();
             FragmentManager fragmentManager = activity.getFragmentManager();
@@ -50,6 +55,11 @@ public class RxPermissions {
         return rxPermissionsFragment;
     }
 
+    /**
+     * 根据TAG, 获取RxPermissionsFragment对象
+     * @param activity
+     * @return
+     */
     private RxPermissionsFragment findRxPermissionsFragment(Activity activity) {
         return (RxPermissionsFragment) activity.getFragmentManager().findFragmentByTag(TAG);
     }
@@ -60,15 +70,18 @@ public class RxPermissions {
      * <p>
      * If one or several permissions have never been requested, invoke the related framework method
      * to ask the user if he allows the permissions.
+     * 一次请求所有权限, 请求结果一次返回, 当所有权限都同意时, 才会返回true, 否则返回false
      */
     @SuppressWarnings("WeakerAccess")
     public ObservableTransformer<Object, Boolean> ensure(final String... permissions) {
         return new ObservableTransformer<Object, Boolean>() {
             @Override
             public ObservableSource<Boolean> apply(Observable<Object> o) {
+                // 一次请求所有的权限, 接收所有的回调
                 return request(o, permissions)
-                        // Transform Observable<Permission> to Observable<Boolean>
+                        // 定期收集Observable的数据放进一个数据包裹，然后发射这些数据包裹，而不是一次发射一个值
                         .buffer(permissions.length)
+                        // Transform Observable<Permission> to Observable<Boolean>
                         .flatMap(new Function<List<Permission>, Observable<Boolean>>() {
                             @Override
                             public Observable<Boolean> apply(List<Permission> permissions) throws Exception {
@@ -78,7 +91,7 @@ public class RxPermissions {
                                     // subscriber, only the onComplete.
                                     return Observable.empty();
                                 }
-                                // Return true if all permissions are granted.
+                                // Return true if all permissions are granted.(如果所有权限都通过, 返回true)
                                 for (Permission p : permissions) {
                                     if (!p.granted) {
                                         return Observable.just(false);
@@ -97,6 +110,7 @@ public class RxPermissions {
      * <p>
      * If one or several permissions have never been requested, invoke the related framework method
      * to ask the user if he allows the permissions.
+     * 一次性请求所有权限, 结果分开返回
      */
     @SuppressWarnings("WeakerAccess")
     public ObservableTransformer<Object, Permission> ensureEach(final String... permissions) {
@@ -127,7 +141,7 @@ public class RxPermissions {
     }
 
     /**
-     *
+     * 一次性请求所有权限
      * @param trigger
      * @param permissions
      * @return
@@ -146,12 +160,13 @@ public class RxPermissions {
     }
 
     /**
-     *
+     * 判断权限是否已申请
      * @param permissions
      * @return
      */
     private Observable<?> pending(final String... permissions) {
         for (String p : permissions) {
+            // 判断权限是否已申请
             if (!mRxPermissionsFragment.containsByPermission(p)) {
                 return Observable.empty();
             }
