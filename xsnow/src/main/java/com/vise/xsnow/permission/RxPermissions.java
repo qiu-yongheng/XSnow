@@ -176,20 +176,23 @@ public class RxPermissions {
     }
 
     /**
-     *
+     * 请求权限的具体实现
      * @param permissions
      * @return
      */
     @TargetApi(Build.VERSION_CODES.M)
     private Observable<Permission> requestImplementation(final String... permissions) {
+        // 保存所有请求权限的集合
         List<Observable<Permission>> list = new ArrayList<>(permissions.length);
+        // 保存未申请的权限集合
         List<String> unrequestedPermissions = new ArrayList<>();
 
-        // In case of multiple permissions, we create an Observable for each of them.
-        // At the end, the observables are combined to have a unique response.
+        // In case of multiple permissions, we create an Observable for each of them.(当请求多个权限的情况下, 创建一个Observable来一个个请求)
+        // At the end, the observables are combined to have a unique response.(最后, 把所有的Observable合并成一个任务)
         for (String permission : permissions) {
             ViseLog.i("Requesting permission " + permission);
 
+            // 判断权限是否已授权
             if (isGranted(permission)) {
                 // Already granted, or not Android M
                 // Return a granted Permission object.
@@ -198,6 +201,7 @@ public class RxPermissions {
                 continue;
             }
 
+            // 判断权限是否被注销
             if (isRevoked(permission)) {
                 // Revoked by a policy, return a denied Permission object.
                 // 权限被取消
@@ -205,22 +209,27 @@ public class RxPermissions {
                 continue;
             }
 
+            // 获取还未申请的权限
             PublishSubject<Permission> subject = mRxPermissionsFragment.getSubjectByPermission(permission);
             // Create a new subject if not exists
             if (subject == null) {
                 unrequestedPermissions.add(permission);
                 subject = PublishSubject.create();
+                // 创建一个申请权限的任务, 并保存到集合中
                 mRxPermissionsFragment.setSubjectForPermission(permission, subject);
             }
 
+            // 添加还未申请权限的任务到集合中
             list.add(subject);
         }
 
         // 如果未申请权限不为空, 申请权限
         if (!unrequestedPermissions.isEmpty()) {
             String[] unrequestedPermissionsArray = unrequestedPermissions.toArray(new String[unrequestedPermissions.size()]);
+            // 申请权限
             requestPermissionsFromFragment(unrequestedPermissionsArray);
         }
+        // 不交错的发射两个或多个Observable的发射物
         return Observable.concat(Observable.fromIterable(list));
     }
 
@@ -261,11 +270,13 @@ public class RxPermissions {
     @TargetApi(Build.VERSION_CODES.M)
     private void requestPermissionsFromFragment(String[] permissions) {
         ViseLog.i("requestPermissionsFromFragment " + TextUtils.join(", ", permissions));
+        // 让fragment调用系统API请求权限
         mRxPermissionsFragment.requestPermissions(permissions);
     }
 
     /**
      * Returns true if the permission is already granted.
+     * 权限是否已授权
      * <p>
      * Always true if SDK &lt; 23.
      */
@@ -276,6 +287,7 @@ public class RxPermissions {
 
     /**
      * Returns true if the permission has been revoked by a policy.
+     * 权限是否已撤销
      * <p>
      * Always false if SDK &lt; 23.
      */
@@ -292,6 +304,11 @@ public class RxPermissions {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
+    /**
+     *
+     * @param permissions
+     * @param grantResults
+     */
     void onRequestPermissionsResult(String permissions[], int[] grantResults) {
         mRxPermissionsFragment.onRequestPermissionsResult(permissions, grantResults, new boolean[permissions.length]);
     }

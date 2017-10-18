@@ -19,6 +19,10 @@ public class ActivityManager {
     private ActivityManager() {
     }
 
+    /**
+     * 单例
+     * @return
+     */
     public static ActivityManager getInstance() {
         if (instance == null) {
             synchronized (ActivityManager.class) {
@@ -30,6 +34,10 @@ public class ActivityManager {
         return instance;
     }
 
+    /**
+     * 添加Activity到栈
+     * @param activity
+     */
     public void addActivity(Activity activity) {
         if (activityStack == null) {
             activityStack = new Stack<>();
@@ -37,10 +45,19 @@ public class ActivityManager {
         activityStack.add(activity);
     }
 
+    /**
+     * 获取栈顶的Activity
+     * @return
+     */
     public Activity currentActivity() {
         return activityStack.lastElement();
     }
 
+    /**
+     * 判断Activity是否在栈中
+     * @param cls
+     * @return
+     */
     public boolean isActivityExist(Class<?> cls) {
         for (Activity activity : activityStack) {
             if (activity.getClass().equals(cls)) {
@@ -50,11 +67,10 @@ public class ActivityManager {
         return false;
     }
 
-    public void finishActivity() {
-        Activity activity = activityStack.lastElement();
-        finishActivity(activity);
-    }
-
+    /**
+     * finish 指定 Activity
+     * @param activity
+     */
     public void finishActivity(Activity activity) {
         if (activity != null) {
             activityStack.remove(activity);
@@ -62,15 +78,24 @@ public class ActivityManager {
         }
     }
 
+    /**
+     *  移除指定Activity
+     * @param activity
+     */
     public void removeActivity(Activity activity) {
         if (activity != null) {
             activityStack.remove(activity);
         }
     }
 
+    /**
+     * finish 指定 Activity
+     * @param cls
+     */
     public void finishActivity(Class<?> cls) {
         for (Activity activity : activityStack) {
             if (activity.getClass().equals(cls)) {
+                activityStack.remove(activity);
                 finishActivity(activity);
             }
         }
@@ -88,16 +113,10 @@ public class ActivityManager {
         activityStack.clear();
     }
 
-    public void finishAllActivity(BaseActivity exceptAct) {
-        while (!activityStack.isEmpty()) {
-            BaseActivity act = (BaseActivity) activityStack.pop();
-            if (act != exceptAct) {
-                act.finish();
-            }
-        }
-        activityStack.push(exceptAct);
-    }
-
+    /**
+     * 关闭程序
+     * @param context
+     */
     public void appExit(Context context) {
         try {
             finishAllActivity();

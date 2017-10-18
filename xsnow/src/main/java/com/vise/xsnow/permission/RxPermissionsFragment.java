@@ -23,8 +23,8 @@ import io.reactivex.subjects.PublishSubject;
 public class RxPermissionsFragment extends Fragment {
     private static final int PERMISSIONS_REQUEST_CODE = 42;
 
-    // Contains all the current permission requests.
-    // Once granted or denied, they are removed from it.
+    // Contains all the current permission requests.(包含当前所有的权限请求)
+    // Once granted or denied, they are removed from it.(当权限被授权或取消, 都会从集合中移除)
     private Map<String, PublishSubject<Permission>> mSubjects = new HashMap<>();
 
     public RxPermissionsFragment() {
@@ -88,6 +88,7 @@ public class RxPermissionsFragment extends Fragment {
                 Log.e(RxPermissions.TAG, "RxPermissions.onRequestPermissionsResult invoked but didn't find the corresponding permission request.");
                 return;
             }
+            // 移除已经申请过的权限
             mSubjects.remove(permissions[i]);
 
             // 判断是否同意权限
@@ -118,7 +119,7 @@ public class RxPermissionsFragment extends Fragment {
     }
 
     /**
-     *
+     * 获取还未申请的权限
      * @param permission
      * @return
      */
@@ -127,7 +128,7 @@ public class RxPermissionsFragment extends Fragment {
     }
 
     /**
-     *
+     * 判断权限是否未申请
      * @param permission
      * @return
      */
@@ -136,7 +137,7 @@ public class RxPermissionsFragment extends Fragment {
     }
 
     /**
-     *
+     * 创建一个申请权限的任务, 并保存到集合中
      * @param permission
      * @param subject
      * @return

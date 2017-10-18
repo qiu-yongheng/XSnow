@@ -16,7 +16,6 @@ import com.vise.xsnow.event.BusManager;
  * @date: 2016-12-19 14:51
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
-
     protected Context mContext;
     private SparseArray<View> mViews;
 
@@ -25,10 +24,12 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         mContext = this;
         mViews = new SparseArray<>();
+        // 注册事件
         if (isRegisterEvent()) {
             // getBus()获取的 RxBusImpl.java 对象是单例的
             BusManager.getBus().register(this);
         }
+        // 添加Activity到栈
         ActivityManager.getInstance().addActivity(this);
     }
 
@@ -51,9 +52,11 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // 注销事件
         if (isRegisterEvent()) {
             BusManager.getBus().unregister(this);
         }
+        // 移除栈
         ActivityManager.getInstance().removeActivity(this);
     }
 
@@ -62,6 +65,12 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         processClick(view);
     }
 
+    /**
+     * 初始化控件
+     * @param viewId
+     * @param <E>
+     * @return
+     */
     protected <E extends View> E F(int viewId) {
         E view = (E) mViews.get(viewId);
 
