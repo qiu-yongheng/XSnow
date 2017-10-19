@@ -27,7 +27,7 @@ public class GetRequest extends BaseHttpRequest<GetRequest> {
     }
 
     /**
-     *
+     * 请求并缓存数据到本地
      * @param type
      * @param <T>
      * @return
@@ -49,7 +49,7 @@ public class GetRequest extends BaseHttpRequest<GetRequest> {
         if (super.tag != null) {
             ApiManager.get().add(super.tag, disposableObserver);
         }
-        //
+        //判断是否缓存到本地
         if (isLocalCache) {
             this.cacheExecute(getSubType(callback)).subscribe(disposableObserver);
         } else {

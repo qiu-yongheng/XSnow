@@ -172,6 +172,9 @@ public class NetTestActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 清除缓存(磁盘缓存)
+     */
     private void clearCache() {
         ViseHttp.clearCache();
     }
