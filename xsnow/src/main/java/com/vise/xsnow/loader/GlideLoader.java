@@ -58,6 +58,12 @@ public class GlideLoader implements ILoader {
         return Glide.with(context);
     }
 
+    /**
+     *
+     * @param request
+     * @param target
+     * @param options
+     */
     private void load(DrawableTypeRequest request, ImageView target, Options options) {
         if (options == null) options = Options.defaultOptions();
 

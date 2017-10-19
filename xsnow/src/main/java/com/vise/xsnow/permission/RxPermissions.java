@@ -197,6 +197,7 @@ public class RxPermissions {
      */
     @TargetApi(Build.VERSION_CODES.M)
     private Observable<Permission> requestImplementation(final String... permissions) {
+        ViseLog.d("请求权限");
         // 保存所有请求权限的集合
         List<Observable<Permission>> list = new ArrayList<>(permissions.length);
         // 保存未申请的权限集合

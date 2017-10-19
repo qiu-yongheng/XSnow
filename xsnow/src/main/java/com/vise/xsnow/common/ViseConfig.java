@@ -3,7 +3,7 @@ package com.vise.xsnow.common;
 import com.vise.xsnow.loader.ILoader;
 
 /**
- * @Description: 全局常量配置
+ * @Description: 全局常量配置, 如果在application没有设置, 使用默认配置
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
  * @date: 2016-12-19 15:23
  */

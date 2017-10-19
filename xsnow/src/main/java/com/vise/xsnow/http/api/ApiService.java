@@ -29,17 +29,41 @@ import retrofit2.http.Url;
  * @date: 2016-12-30 16:42
  */
 public interface ApiService {
+    /**
+     * get请求
+     * @param url
+     * @param maps
+     * @return
+     */
     @GET()
     Observable<ResponseBody> get(@Url String url, @QueryMap Map<String, String> maps);
 
+    /**
+     *
+     * @param url
+     * @param maps
+     * @return
+     */
     @FormUrlEncoded
     @POST()
     Observable<ResponseBody> post(@Url() String url, @FieldMap Map<String, String> maps);
 
+    /**
+     *
+     * @param url
+     * @param maps
+     * @return
+     */
     @FormUrlEncoded
     @POST()
     Observable<ResponseBody> postForm(@Url() String url, @FieldMap Map<String, Object> maps);
 
+    /**
+     *
+     * @param url
+     * @param requestBody
+     * @return
+     */
     @POST()
     Observable<ResponseBody> postBody(@Url() String url, @Body RequestBody requestBody);
 
@@ -61,10 +85,22 @@ public interface ApiService {
     @DELETE()
     Observable<ResponseBody> delete(@Url() String url, @FieldMap Map<String, String> maps);
 
+    /**
+     * 下载文件
+     * @param url
+     * @param maps
+     * @return
+     */
     @Streaming
     @GET()
     Observable<ResponseBody> downFile(@Url() String url, @QueryMap Map<String, String> maps);
 
+    /**
+     * 上传文件
+     * @param url
+     * @param parts
+     * @return
+     */
     @Multipart
     @POST()
     Observable<ResponseBody> uploadFiles(@Url() String url, @Part() List<MultipartBody.Part> parts);

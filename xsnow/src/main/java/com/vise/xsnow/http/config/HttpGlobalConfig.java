@@ -48,8 +48,7 @@ public class HttpGlobalConfig {
     private int retryCount;//请求失败重试次数
 
     private static HttpGlobalConfig instance;
-    private HttpGlobalConfig() {
-    }
+    private HttpGlobalConfig() {}
 
     public static HttpGlobalConfig getInstance() {
         if (instance == null) {
@@ -63,7 +62,7 @@ public class HttpGlobalConfig {
     }
 
     /**
-     * 设置CallAdapter工厂
+     * 设置适配器工厂
      *
      * @param factory
      * @return
@@ -85,7 +84,7 @@ public class HttpGlobalConfig {
     }
 
     /**
-     * 设置Call的工厂
+     * 设置请求工厂
      *
      * @param factory
      * @return

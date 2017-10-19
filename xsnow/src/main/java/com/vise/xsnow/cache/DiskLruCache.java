@@ -52,6 +52,7 @@ import java.util.regex.Pattern;
  * GitHub: https://github.com/JakeWharton/DiskLruCache
  * 使用详解: http://blog.csdn.net/guolin_blog/article/details/28863651
  * 硬盘缓存解决方案
+ *
  * <p>
  * A cache that uses a bounded amount of space on a filesystem. Each cache
  * entry has a string key and a fixed number of values. Each key must match

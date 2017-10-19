@@ -34,6 +34,8 @@ public class DiskCache implements ICache {
 
     /**
      * 构造器
+     * 1. 获取缓存地址
+     * 2. 获取缓存大小
      * @param context
      */
     public DiskCache(Context context) {
@@ -99,6 +101,11 @@ public class DiskCache implements ICache {
 
     }
 
+    /**
+     * 保存对象到缓存
+     * @param key
+     * @param value
+     */
     @Override
     public void put(String key, Object value) {
         put(key, value != null ? GsonUtil.gson().toJson(value) : null);

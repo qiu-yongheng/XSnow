@@ -106,7 +106,7 @@ public class ViseHttp {
     }
 
     /**
-     * 可传入自定义Retrofit接口服务的请求类型
+     * 可传入自定义Retrofit接口服务的请求类型(与普通retrofit+rxjava一致)
      * @return
      */
     public static <T> RetrofitRequest RETROFIT() {

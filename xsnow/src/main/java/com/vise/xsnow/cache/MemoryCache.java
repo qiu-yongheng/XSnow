@@ -3,8 +3,6 @@ package com.vise.xsnow.cache;
 import android.text.TextUtils;
 import android.util.LruCache;
 
-import com.vise.log.ViseLog;
-
 /**
  * @Description: 内存缓存
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
@@ -59,15 +57,15 @@ public class MemoryCache implements ICache {
         return cache.get(key);
     }
 
-    public synchronized <T> T get(String key, Class<T> clazz) {
-        try {
-            return (T) cache.get(key);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ViseLog.e(e);
-        }
-        return null;
-    }
+//    public synchronized <T> T get(String key, Class<T> clazz) {
+//        try {
+//            return (T) cache.get(key);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            ViseLog.e(e);
+//        }
+//        return null;
+//    }
 
     /**
      * 移除缓存
@@ -80,6 +78,11 @@ public class MemoryCache implements ICache {
         }
     }
 
+    /**
+     * 是否包含对应缓存
+     * @param key
+     * @return
+     */
     @Override
     public boolean contains(String key) {
         return cache.get(key) != null;

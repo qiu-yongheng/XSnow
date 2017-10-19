@@ -26,17 +26,30 @@ public class GetRequest extends BaseHttpRequest<GetRequest> {
         return apiService.get(suffixUrl, params).compose(this.<T>norTransformer(type));
     }
 
+    /**
+     *
+     * @param type
+     * @param <T>
+     * @return
+     */
     @Override
     protected <T> Observable<CacheResult<T>> cacheExecute(Type type) {
         return this.<T>execute(type).compose(ViseHttp.getApiCache().<T>transformer(cacheMode, type));
     }
 
+    /**
+     * 执行请求
+     * @param callback
+     * @param <T>
+     */
     @Override
     protected <T> void execute(ACallback<T> callback) {
+        // 自定义订阅者
         DisposableObserver disposableObserver = new ApiCallbackSubscriber(callback);
         if (super.tag != null) {
             ApiManager.get().add(super.tag, disposableObserver);
         }
+        //
         if (isLocalCache) {
             this.cacheExecute(getSubType(callback)).subscribe(disposableObserver);
         } else {

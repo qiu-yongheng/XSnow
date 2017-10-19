@@ -65,6 +65,11 @@ public class UploadProgressRequestBody extends RequestBody {
         return -1;
     }
 
+    /**
+     * 将上传文件写入到requestBody
+     * @param sink
+     * @throws IOException
+     */
     @Override
     public void writeTo(@NonNull BufferedSink sink) throws IOException {
         CountingSink countingSink = new CountingSink(sink);
@@ -73,9 +78,6 @@ public class UploadProgressRequestBody extends RequestBody {
         bufferedSink.flush();
     }
 
-    /**
-     *
-     */
     private final class CountingSink extends ForwardingSink {
         //当前字节长度
         private long currentLength = 0L;
@@ -91,7 +93,7 @@ public class UploadProgressRequestBody extends RequestBody {
             super.write(source, byteCount);
             //增加当前写入的字节数
             currentLength += byteCount;
-            //获得contentLength的值，后续不再调用
+            //获得contentLength的值(文件大小)，后续不再调用
             if (totalLength == 0) {
                 totalLength = contentLength();
             }
@@ -106,6 +108,7 @@ public class UploadProgressRequestBody extends RequestBody {
                         .subscribe(new Consumer<Long>() {
                             @Override
                             public void accept(Long aLong) throws Exception {
+                                // 回调上传进度
                                 ViseLog.i("upload progress currentLength:" + currentLength + ",totalLength:" + totalLength);
                                 callback.onProgress(currentLength, totalLength, (100.0f * currentLength) / totalLength);
                             }

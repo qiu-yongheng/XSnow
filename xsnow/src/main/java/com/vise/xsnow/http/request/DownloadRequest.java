@@ -44,10 +44,19 @@ public class DownloadRequest extends BaseHttpRequest<DownloadRequest> {
     private String dirName = ViseConfig.DEFAULT_DOWNLOAD_DIR;
     private String fileName = ViseConfig.DEFAULT_DOWNLOAD_FILE_NAME;
 
+    /**
+     * 设置URL后缀
+     * @param suffixUrl
+     */
     public DownloadRequest(String suffixUrl) {
         super(suffixUrl);
     }
 
+    /**
+     * 设置保存地址
+     * @param dirName
+     * @return
+     */
     public DownloadRequest setDirName(String dirName) {
         if (!TextUtils.isEmpty(dirName)) {
             this.dirName = dirName;
@@ -55,6 +64,11 @@ public class DownloadRequest extends BaseHttpRequest<DownloadRequest> {
         return this;
     }
 
+    /**
+     * 获取保存文件名
+     * @param fileName
+     * @return
+     */
     public DownloadRequest setFileName(String fileName) {
         if (!TextUtils.isEmpty(fileName)) {
             this.fileName = fileName;
@@ -69,6 +83,7 @@ public class DownloadRequest extends BaseHttpRequest<DownloadRequest> {
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .toFlowable(BackpressureStrategy.LATEST)
+                // 将responseBody解析保存的指定文件中
                 .flatMap(new Function<ResponseBody, Publisher<?>>() {
                     @Override
                     public Publisher<?> apply(final ResponseBody responseBody) throws Exception {

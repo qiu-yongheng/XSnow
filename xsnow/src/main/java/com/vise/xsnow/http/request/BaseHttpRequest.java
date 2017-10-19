@@ -49,6 +49,12 @@ public abstract class BaseHttpRequest<R extends BaseHttpRequest> extends BaseReq
         }
     }
 
+    /**
+     * 默认使用全局配置, 如果有设置局部设置, 就覆盖
+     * @param type
+     * @param <T>
+     * @return
+     */
     public <T> Observable<T> request(Type type) {
         // 全局配置
         generateGlobalConfig();
@@ -71,6 +77,8 @@ public abstract class BaseHttpRequest<R extends BaseHttpRequest> extends BaseReq
 
     /**
      * 局部配置
+     * 如果有局部配置, 就使用局部配置,
+     * 如果没有局部配置, 就使用全局配置
      */
     @Override
     protected void generateLocalConfig() {
@@ -80,6 +88,7 @@ public abstract class BaseHttpRequest<R extends BaseHttpRequest> extends BaseReq
         if (httpGlobalConfig.getGlobalParams() != null) {
             params.putAll(httpGlobalConfig.getGlobalParams());
         }
+        // 如果没有局部设置重试次数, 使用全局配置
         if (retryCount <= 0) {
             retryCount = httpGlobalConfig.getRetryCount();
         }
@@ -87,7 +96,7 @@ public abstract class BaseHttpRequest<R extends BaseHttpRequest> extends BaseReq
             retryDelayMillis = httpGlobalConfig.getRetryDelayMillis();
         }
 
-        // 本地缓存
+        // 是否使用本地缓存, 默认不使用
         if (isLocalCache) {
             if (cacheKey != null) {
                 ViseHttp.getApiCacheBuilder().cacheKey(cacheKey);

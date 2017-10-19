@@ -310,6 +310,7 @@ public abstract class BaseRequest<R extends BaseRequest> {
      * 生成全局配置
      */
     protected void generateGlobalConfig() {
+        // 获取application设置的全局配置
         httpGlobalConfig = ViseHttp.CONFIG();
 
         if (httpGlobalConfig.getBaseUrl() == null) {
@@ -317,10 +318,12 @@ public abstract class BaseRequest<R extends BaseRequest> {
         }
         ViseHttp.getRetrofitBuilder().baseUrl(httpGlobalConfig.getBaseUrl());
 
+        // 如: GsonConverterFactory.create()
         if (httpGlobalConfig.getConverterFactory() != null) {
             ViseHttp.getRetrofitBuilder().addConverterFactory(httpGlobalConfig.getConverterFactory());
         }
 
+        // 如果没有设置, 默认RxJava2CallAdapterFactory.create()
         if (httpGlobalConfig.getCallAdapterFactory() == null) {
             httpGlobalConfig.callAdapterFactory(RxJava2CallAdapterFactory.create());
         }

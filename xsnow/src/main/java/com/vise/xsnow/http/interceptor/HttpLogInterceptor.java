@@ -41,6 +41,11 @@ public class HttpLogInterceptor implements Interceptor {
         ViseLog.i(message);
     }
 
+    /**
+     * 设置打印等级
+     * @param level
+     * @return
+     */
     public HttpLogInterceptor setLevel(Level level) {
         if (level == null)
             throw new NullPointerException("level == null. Use Level.NONE instead.");

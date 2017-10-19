@@ -2,6 +2,7 @@ package com.vise.snowdemo;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,9 +19,9 @@ import android.widget.TextView;
 import com.vise.log.ViseLog;
 import com.vise.snowdemo.activity.ImageLoaderActivity;
 import com.vise.snowdemo.activity.NetTestActivity;
-import com.vise.snowdemo.activity.OtherTestActivity;
 import com.vise.snowdemo.activity.StatusSwitchActivity;
 import com.vise.snowdemo.activity.UploadDownActivity;
+import com.vise.snowdemo.activity.aaa;
 import com.vise.snowdemo.mode.AuthorEvent;
 import com.vise.utils.view.ActivityUtil;
 import com.vise.utils.view.DialogUtil;
@@ -57,9 +58,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     protected void bindEvent() {
-
     }
 
+    /**
+     * 申请权限
+     */
     @Override
     protected void initData() {
         PermissionManager.instance().with(this).request(new OnPermissionCallback() {
@@ -83,6 +86,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }, Manifest.permission.CALL_PHONE);
     }
 
+    /**
+     * 点击事件回调
+     * @param view
+     */
     @Override
     protected void processClick(View view) {
 
@@ -111,7 +118,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else if (id == R.id.menu_status_view) {
             ActivityUtil.startForwardActivity(this, StatusSwitchActivity.class);
         } else if (id == R.id.menu_other) {
-            ActivityUtil.startForwardActivity(this, OtherTestActivity.class);
+//            ActivityUtil.startForwardActivity(this, OtherTestActivity.class);
+            startActivity(new Intent(this, aaa.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
