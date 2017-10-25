@@ -22,6 +22,10 @@
             android:id="@+id/menu_other"
             android:icon="@android:drawable/star_big_on"
             android:title="@string/menu_other"/>
+        <item
+            android:id="@+id/menu_mvp"
+            android:icon="@android:drawable/star_big_on"
+            android:title="@string/menu_mvp"/>
     </group>
 
 </menu>
